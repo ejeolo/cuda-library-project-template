@@ -37,7 +37,7 @@ int main(void)
   vector_add_kernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, n);
 */
 
-  ic_add(d_A, d_B, d_C, n);
+  ic_sub(d_A, d_B, d_C, n);
 
   printf("Copy output data from the CUDA device to the host memory\n");
   cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);

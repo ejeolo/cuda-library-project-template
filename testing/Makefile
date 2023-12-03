@@ -11,7 +11,7 @@ test.o: test.cpp
 
 $(TARGET):test.o
 	g++ $< -o $@ -L/usr/local/cuda/lib64 -lcudart -lcudadevrt  -L../lib  -licmm
-	export LD_LIBRARY_PATH=${PWD}/../lib
+	@echo "to execute: export LD_LIBRARY_PATH=${PWD}/../lib"
 
 .PHONY:clean
 clean:
