@@ -1,22 +1,35 @@
 # executable
 TARGET = test
+GPU_ARCH = -arch=sm_70
+
 all: $(TARGET)
 
 add.o: gpu/add.cu
-	nvcc -dc -rdc=true  -arch=sm_70 -c gpu/add.cu
+	nvcc -dc -rdc=true $(GPU_ARCH) -c $<
+
+sub.o: gpu/sub.cu
+	nvcc -dc -rdc=true $(GPU_ARCH) -c $<
 
 add_link.o: add.o
-	nvcc   -arch=sm_70 -dlink   -o add_link.o  add.o  -L/usr/local/cuda/lib64 -lcudart -lcudadevrt
+	nvcc $(GPU_ARCH) -dlink   -o $@  $<  -L/usr/local/cuda/lib64 -lcudart -lcudadevrt
+
+sub_link.o: sub.o
+	nvcc $(GPU_ARCH) -dlink   -o $@  $<  -L/usr/local/cuda/lib64 -lcudart -lcudadevrt
 
 ic_add.o: src/ic_add.cpp
-	g++ -c src/ic_add.cpp  -L/usr/local/cuda/lib64 -I/usr/local/cuda/include -lcudart -lcudadevrt -I./
+	g++ -c $<  -L/usr/local/cuda/lib64 -I/usr/local/cuda/include -lcudart -lcudadevrt -I./
+
+ic_sub.o: src/ic_sub.cpp
+	g++ -c $<  -L/usr/local/cuda/lib64 -I/usr/local/cuda/include -lcudart -lcudadevrt -I./
 
 test.o: testing/test.cpp
-	g++ -c testing/test.cpp -I/usr/local/cuda/include -L/usr/local/cuda/lib64 -lcudart -lcudadevrt -I./include
+	g++ -c $< -I/usr/local/cuda/include -L/usr/local/cuda/lib64 -lcudart -lcudadevrt -I./include
 
-test: add.o ic_add.o test.o add_link.o
-	g++ add.o ic_add.o test.o add_link.o -L/usr/local/cuda/lib64 -lcudart -lcudadevrt   -o test
+test: sub.o ic_sub.o sub_link.o add.o ic_add.o test.o add_link.o
+	g++ $^ -L/usr/local/cuda/lib64 -lcudart -lcudadevrt   -o test
+	mkdir ./bin
 	cp ./test ./bin/
+	-rm -f *.o
 
 .PHONY:clean
 clean:
