@@ -1,7 +1,7 @@
 # CUDA Library Project Template
 
 ## How to build
-	To build:	 
+    To build:	 
 		$ cd ./cuda-library-project-template/
 		$ make
 	
@@ -10,6 +10,7 @@
 	To test:
 		$ cd testing
 		$ make
+		$ export LD_LIBRARY_PATH=${PWD}/../lib
 		$ ./test
 
 ## Compatable GPUs
